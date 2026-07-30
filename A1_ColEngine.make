@@ -119,8 +119,10 @@ GENERATED :=
 OBJECTS :=
 
 GENERATED += $(OBJDIR)/AABBColider.o
+GENERATED += $(OBJDIR)/CollisionManager.o
 GENERATED += $(OBJDIR)/main.o
 OBJECTS += $(OBJDIR)/AABBColider.o
+OBJECTS += $(OBJDIR)/CollisionManager.o
 OBJECTS += $(OBJDIR)/main.o
 
 # Rules
@@ -186,6 +188,9 @@ endif
 # #############################################
 
 $(OBJDIR)/AABBColider.o: src/AABBColider.cpp
+	@echo "$(notdir $<)"
+	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
+$(OBJDIR)/CollisionManager.o: src/CollisionManager.cpp
 	@echo "$(notdir $<)"
 	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
 $(OBJDIR)/main.o: src/main.cpp
