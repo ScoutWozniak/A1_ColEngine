@@ -10,6 +10,7 @@ class AABBCollider {
         bool isStatic = true;
 
     public:
+        AABBCollider();
         AABBCollider(Vector2 size, Vector2 position, bool _isStatic);
 
         void Draw();
@@ -21,4 +22,4 @@ class AABBCollider {
 
         void SetPosition(Vector2 _position);
     
-};
+};  

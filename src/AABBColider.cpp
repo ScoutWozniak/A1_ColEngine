@@ -1,5 +1,10 @@
 #include "AABBColider.h"
 
+AABBCollider::AABBCollider()
+{
+    AABBCollider({0,0}, {32,32}, true);
+}
+
 AABBCollider::AABBCollider(Vector2 position, Vector2 size, bool _isStatic)
 {
     recCollider.x = position.x;
@@ -16,6 +21,8 @@ AABBCollider::AABBCollider(Vector2 position, Vector2 size, bool _isStatic)
     isStatic = _isStatic;
 }
 
+
+// TODO - remove this functionality from the collider and move it to a debug system we don't need it!
 void AABBCollider::Draw()
 {
     if (isStatic) {

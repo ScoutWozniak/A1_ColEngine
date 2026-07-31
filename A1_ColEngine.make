@@ -121,9 +121,11 @@ OBJECTS :=
 GENERATED += $(OBJDIR)/AABBColider.o
 GENERATED += $(OBJDIR)/CollisionManager.o
 GENERATED += $(OBJDIR)/main.o
+GENERATED += $(OBJDIR)/physicsbody.o
 OBJECTS += $(OBJDIR)/AABBColider.o
 OBJECTS += $(OBJDIR)/CollisionManager.o
 OBJECTS += $(OBJDIR)/main.o
+OBJECTS += $(OBJDIR)/physicsbody.o
 
 # Rules
 # #############################################
@@ -194,6 +196,9 @@ $(OBJDIR)/CollisionManager.o: src/CollisionManager.cpp
 	@echo "$(notdir $<)"
 	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
 $(OBJDIR)/main.o: src/main.cpp
+	@echo "$(notdir $<)"
+	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
+$(OBJDIR)/physicsbody.o: src/physicsbody.cpp
 	@echo "$(notdir $<)"
 	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
 
