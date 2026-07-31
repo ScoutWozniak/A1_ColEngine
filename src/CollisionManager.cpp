@@ -1,6 +1,26 @@
 #include "CollisionManager.h"
+
 #include <bits/stdc++.h>
 #include <math.h>
+
+CollisionManager::CollisionManager()
+{
+    
+}
+
+void CollisionManager::InitialiseManager()
+{
+    g_Instance =  this;
+}
+
+std::shared_ptr<AABBCollider> CollisionManager::CreateCollider(Vector2 _position, Vector2 _size, bool _isStatic)
+{
+    std::shared_ptr<AABBCollider> storedPointer(new AABBCollider(_position,_size, _isStatic));
+    m_registeredColliders.emplace_back(storedPointer);
+    return storedPointer;
+}
+
+
 void CollisionManager::UpdateActiveColliders()
 {
     for (AABBCollider* collider : activeColliders) {
@@ -65,6 +85,12 @@ void CollisionManager::SolveCollision(AABBCollider *_colA, AABBCollider *_colB) 
     if (solveDirection == AXIS_WIDTH) newPosition.x += solveDir * collisionRect.width;
     else newPosition.y += solveDir * collisionRect.height;
     _colA->SetPosition(newPosition);
+}
+
+std::unique_ptr<CollisionManager> CollisionManager::GetInstance()
+{
+    std::unique_ptr<CollisionManager> instance(CollisionManager::g_Instance);
+    return instance;
 }
 
 bool CollisionManager::CheckRectangleCollision(AABBCollider *_colA, AABBCollider *_colB)
