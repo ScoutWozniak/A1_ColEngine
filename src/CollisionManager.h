@@ -7,10 +7,8 @@ class CollisionManager {
     private:
         std::list<AABBCollider*> activeColliders;
 
-        std::list<std::shared_ptr<AABBCollider>> m_colliderReferences;
+        std::list<std::shared_ptr<AABBCollider>> m_registeredColliders;
 
-
-        std::list<AABBCollider> m_registeredColliders;
     public:
 
         inline static CollisionManager * g_Instance;
@@ -23,15 +21,15 @@ class CollisionManager {
 
         void UpdateActiveColliders();
 
-        void UpdateCollider(std::shared_ptr<AABBCollider> _col);
+        void UpdateCollider(AABBCollider* _col);
 
         void DrawColliders();
 
         void RegisterCollider(AABBCollider* _collider);
 
-        bool CheckRectangleCollision(std::shared_ptr<AABBCollider> _colA, std::shared_ptr<AABBCollider> _colB);
+        bool CheckRectangleCollision(AABBCollider* _colA, AABBCollider* _colB);
 
-        void SolveCollision(std::shared_ptr<AABBCollider> _colA, std::shared_ptr<AABBCollider> _colB);
+        void SolveCollision(AABBCollider *_colA, AABBCollider *_colB);
 
         static std::unique_ptr<CollisionManager> GetInstance();
         
