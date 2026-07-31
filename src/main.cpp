@@ -35,6 +35,7 @@ int main ()
 
 	PhysicsBody* bodyTest = colManager.CreatePhysicsBody<PhysicsBody>();
 	
+	
 	// game loop
 	while (!WindowShouldClose())		// run the loop until the user presses ESCAPE or presses the Close button on the window
 	{
