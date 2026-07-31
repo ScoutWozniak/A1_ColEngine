@@ -27,13 +27,13 @@ int main ()
 	colManager->InitialiseManager();
 
 
-	ColiderReference collider01 = {{32,32}, {32, 32}, false};
+	ColiderReference* collider01 = new ColiderReference({32,32}, {32, 32}, false);
 	
 	// game loop
 	while (!WindowShouldClose())		// run the loop until the user presses ESCAPE or presses the Close button on the window
 	{
 
-		colManager->UpdateActiveColliders();
+		//colManager->UpdateActiveColliders();
 
 		// drawing
 		BeginDrawing();
@@ -41,8 +41,11 @@ int main ()
 		// Setup the back buffer for drawing (clear color and depth buffers)
 		ClearBackground(BLACK);
 
-		// draw some text using the default font
-		DrawText("Collision Engine", 0,0,20, WHITE);
+
+		if (collider01->GetCollider())
+			DrawText("Collision Engine", 0,0,20, WHITE);
+
+		//colManager->DrawColliders();
 
 		
 		// end the frame and get ready for the next one  (display frame, poll input, etc...)

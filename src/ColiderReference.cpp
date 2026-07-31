@@ -7,3 +7,8 @@ ColiderReference::ColiderReference(Vector2 _position, Vector2 _size, bool _isSta
 
     collider = colManager->CreateCollider(_position, _size, _isStatic);
 }
+
+std::shared_ptr<AABBCollider> ColiderReference::GetCollider()
+{
+    return collider;
+}
