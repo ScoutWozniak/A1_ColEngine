@@ -1,11 +1,23 @@
 #include <list>
 #include "AABBColider.h"
 
+// We should only need to reference the base physics class, all logic should replace virtual methods if need be
+#include "Physics/physicsbody.h"
+
+
 class CollisionManager {
     private:
         std::list<AABBCollider*> activeColliders;
 
+        std::list<PhysicsBody> physicsBodies; 
+        
+
     public:
+        // Physics body related code
+
+        template<typename T>
+        T* CreatePhysicsBody();
+
         void UpdateActiveColliders();
 
         void UpdateCollider(AABBCollider* _col);
@@ -19,3 +31,14 @@ class CollisionManager {
         void SolveCollision(AABBCollider *_colA, AABBCollider *_colB);
         
 };
+
+template<typename T>
+inline T * CollisionManager::CreatePhysicsBody()
+{
+    static_assert(std::is_base_of<PhysicsBody, T>::value, "AAA");
+
+    PhysicsBody* newBody = new T();
+
+
+    return newBody;
+}

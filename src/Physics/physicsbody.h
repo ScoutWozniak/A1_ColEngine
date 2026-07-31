@@ -11,10 +11,15 @@
 
 class PhysicsBody {
     public:
-        PhysicsBody(Rectangle _collider);
+    
+        PhysicsBody() { PhysicsBody(Rectangle{0,0,32,32}, true); }
+        PhysicsBody(Rectangle _collider, bool _isStatic);
+
         ~PhysicsBody();
 
         AABBCollider GetCollider();
+
+        bool m_isStatic = false;
     private:
         AABBCollider m_collider;
 };

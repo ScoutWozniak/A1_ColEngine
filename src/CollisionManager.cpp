@@ -1,6 +1,8 @@
 #include "CollisionManager.h"
 #include <bits/stdc++.h>
 #include <math.h>
+
+
 void CollisionManager::UpdateActiveColliders()
 {
     for (AABBCollider* collider : activeColliders) {
@@ -71,3 +73,5 @@ bool CollisionManager::CheckRectangleCollision(AABBCollider *_colA, AABBCollider
 {
     return CheckCollisionRecs(_colA->GetRectangle(), _colB->GetRectangle());
 }
+
+

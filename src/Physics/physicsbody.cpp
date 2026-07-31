@@ -1,6 +1,6 @@
 #include "physicsbody.h"
 
-PhysicsBody::PhysicsBody(Rectangle _collider)
+PhysicsBody::PhysicsBody(Rectangle _collider, bool _isStatic)
 {
     m_collider = AABBCollider{{_collider.x,_collider.y}, {_collider.width,_collider.height}, false};
 
@@ -9,7 +9,7 @@ PhysicsBody::PhysicsBody(Rectangle _collider)
 
 PhysicsBody::~PhysicsBody()
 {
-
+    // Remove references here
 }
 
 AABBCollider PhysicsBody::GetCollider()
