@@ -35,10 +35,9 @@ class CollisionManager {
 template<typename T>
 inline T * CollisionManager::CreatePhysicsBody()
 {
-    static_assert(std::is_base_of<PhysicsBody, T>::value, "AAA");
+    PhysicsBody newBody = PhysicsBody{{0,0,32,32}, false};
 
-    PhysicsBody* newBody = new T();
+    
 
-
-    return newBody;
+    return &physicsBodies.emplace_back(newBody);
 }

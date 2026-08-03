@@ -12,6 +12,7 @@ by Jeffery Myers is marked with CC0 1.0. To view a copy of this license, visit h
 #include "resource_dir.h"	// utility header for SearchAndSetResourceDir
 #include "CollisionManager.h"
 
+#include <iostream>
 
 int main ()
 {
@@ -33,8 +34,7 @@ int main ()
 	colManager.RegisterCollider(&collider02);
 
 
-	PhysicsBody* bodyTest = colManager.CreatePhysicsBody<PhysicsBody>();
-	
+	PhysicsBody* bodyTest = colManager.CreatePhysicsBody<PhysicsBody>();	
 	
 	// game loop
 	while (!WindowShouldClose())		// run the loop until the user presses ESCAPE or presses the Close button on the window

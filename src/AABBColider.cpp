@@ -7,33 +7,28 @@ AABBCollider::AABBCollider()
 
 AABBCollider::AABBCollider(Vector2 position, Vector2 size, bool _isStatic)
 {
-    recCollider.x = position.x;
-    recCollider.y = position.y;
-    recCollider.width = size.x;
-    recCollider.height = size.y;
+    m_collider = {{position.x, position.y, size.x, size.y}, _isStatic};
 
 
     debugDrawColor.r = (unsigned char)GetRandomValue(0,255);
     debugDrawColor.g = (unsigned char)GetRandomValue(0,255);
     debugDrawColor.b = (unsigned char)GetRandomValue(0,255);
     debugDrawColor.a = 255;
-
-    isStatic = _isStatic;
 }
 
 
 // TODO - remove this functionality from the collider and move it to a debug system we don't need it!
 void AABBCollider::Draw()
 {
-    if (isStatic) {
-        DrawRectangle(recCollider.x, recCollider.y, recCollider.width, recCollider.height, ColorAlpha(debugDrawColor, 0.5f));
+    if (m_collider.m_isStatic) {
+        DrawRectangle(m_collider.m_size.x, m_collider.m_size.y, m_collider.m_size.width, m_collider.m_size.height, ColorAlpha(debugDrawColor, 0.5f));
     }
-    DrawRectangleLinesEx(recCollider, 2.0f, debugDrawColor);
-    DrawCircle(recCollider.x, recCollider.y, 8.0f, debugDrawColor);
+    DrawRectangleLinesEx(m_collider.m_size, 2.0f, debugDrawColor);
+    DrawCircle(m_collider.m_size.x, m_collider.m_size.y, 8.0f, debugDrawColor);
 }
 
 void AABBCollider::SetPosition(Vector2 _position)
 {  
-    recCollider.x = _position.x;
-    recCollider.y = _position.y;
+    m_collider.m_size.x = _position.x;
+    m_collider.m_size.y = _position.y;
 }
