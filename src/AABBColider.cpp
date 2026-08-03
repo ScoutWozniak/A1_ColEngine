@@ -5,6 +5,8 @@ AABBCollider::AABBCollider()
     AABBCollider({0,0}, {32,32}, true);
 }
 
+
+
 AABBCollider::AABBCollider(Vector2 position, Vector2 size, bool _isStatic)
 {
     m_collider = {{position.x, position.y, size.x, size.y}, _isStatic};

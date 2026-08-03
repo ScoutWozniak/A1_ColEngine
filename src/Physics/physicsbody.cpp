@@ -7,6 +7,11 @@ PhysicsBody::PhysicsBody(Rectangle _collider, bool _isStatic)
     // TODO - Hook into physics manager here
 }
 
+PhysicsBody::PhysicsBody(AABB _aabb)
+{
+    m_collider = AABBCollider{_aabb};
+}
+
 PhysicsBody::~PhysicsBody()
 {
     // Remove references here

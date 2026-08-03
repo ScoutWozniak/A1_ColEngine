@@ -34,7 +34,7 @@ int main ()
 	colManager.RegisterCollider(&collider02);
 
 
-	PhysicsBody* bodyTest = colManager.CreatePhysicsBody<PhysicsBody>();	
+	PhysicsBody* bodyTest = colManager.CreatePhysicsBody<PhysicsBody>(AABB{Rectangle{0,0,32,32}, true});	
 	
 	// game loop
 	while (!WindowShouldClose())		// run the loop until the user presses ESCAPE or presses the Close button on the window

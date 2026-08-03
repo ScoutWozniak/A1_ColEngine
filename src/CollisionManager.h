@@ -16,7 +16,7 @@ class CollisionManager {
         // Physics body related code
 
         template<typename T>
-        T* CreatePhysicsBody();
+        T* CreatePhysicsBody(AABB _aabb);
 
         void UpdateActiveColliders();
 
@@ -33,9 +33,9 @@ class CollisionManager {
 };
 
 template<typename T>
-inline T * CollisionManager::CreatePhysicsBody()
+inline T * CollisionManager::CreatePhysicsBody(AABB _aabb)
 {
-    PhysicsBody newBody = PhysicsBody{{0,0,32,32}, false};
+    PhysicsBody newBody = PhysicsBody{_aabb};
 
     
 

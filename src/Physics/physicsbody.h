@@ -14,6 +14,7 @@ class PhysicsBody {
     
         PhysicsBody() { PhysicsBody(Rectangle{0,0,32,32}, true); }
         PhysicsBody(Rectangle _collider, bool _isStatic);
+        PhysicsBody(AABB _aabb);
 
         ~PhysicsBody();
 
