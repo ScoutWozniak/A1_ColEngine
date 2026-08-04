@@ -1,7 +1,7 @@
 #include "CollisionManager.h"
 #include <bits/stdc++.h>
 #include <math.h>
-
+#include "raymath.h"
 
 void CollisionManager::UpdateActiveColliders()
 {
@@ -10,6 +10,8 @@ void CollisionManager::UpdateActiveColliders()
         UpdateCollider(collider);
     }
 }
+
+
 
 void CollisionManager::UpdateCollider(AABBCollider *_col)
 {
@@ -35,9 +37,10 @@ void TryDrawCollisionRec(AABBCollider* _colA, AABBCollider* _colB) {
 
 void CollisionManager::DrawColliders()
 {
-    TryDrawCollisionRec(activeColliders.front(), activeColliders.back());
-    for (AABBCollider* collider : activeColliders) {
-        collider->Draw();
+    //TryDrawCollisionRec(activeColliders.front(), activeColliders.back());
+    for (PhysicsBody body : physicsBodies) {
+        AABBCollider* col = body.GetCollider();
+        col->Draw();
     }
 }
 
@@ -69,9 +72,38 @@ void CollisionManager::SolveCollision(AABBCollider *_colA, AABBCollider *_colB) 
     _colA->SetPosition(newPosition);
 }
 
+void CollisionManager::UpdatePhysicsWorld()
+{
+    for (PhysicsBody* body : physicsPointers) {
+        if (body->m_isStatic) continue;
+        UpdatePhysicsBody(body);
+    }
+}
+
+void CollisionManager::UpdatePhysicsBody(PhysicsBody* _physicsBody) {
+    for (PhysicsBody* otherBody : physicsPointers) {
+        if (otherBody == _physicsBody) continue;
+
+        if (BroadStage(_physicsBody, otherBody)) {
+            NarrowStage(_physicsBody, otherBody);
+        }
+    }
+}
+
 bool CollisionManager::CheckRectangleCollision(AABBCollider *_colA, AABBCollider *_colB)
 {
     return CheckCollisionRecs(_colA->GetRectangle(), _colB->GetRectangle());
+}
+
+// Check overlap of bodies accounting for velocity
+bool CollisionManager::BroadStage(PhysicsBody* _col, PhysicsBody* _colB) {
+    return CheckRectangleCollision(_col->GetCollider(), _colB->GetCollider());
+}
+
+// Check overlap of bodies and then solve collision
+bool CollisionManager::NarrowStage(PhysicsBody* _colA, PhysicsBody* _colB) {
+    SolveCollision(_colA->GetCollider(), _colB->GetCollider());
+    return true;
 }
 
 

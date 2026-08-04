@@ -18,9 +18,17 @@ class PhysicsBody {
 
         ~PhysicsBody();
 
-        AABBCollider GetCollider();
+        AABBCollider* GetCollider();
 
         bool m_isStatic = false;
+
+        Vector2 GetPosition() {return {m_collider.GetRectangle().x, m_collider.GetRectangle().y};}
+
+        void SetPositon(Vector2 _newPos) {m_collider.SetPosition(_newPos);}
+
+        Vector2 m_velocity = {0,0};
+
+        AABB GetBroadPhaseCollider();
     private:
         AABBCollider m_collider;
 };

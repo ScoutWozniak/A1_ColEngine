@@ -17,7 +17,7 @@ PhysicsBody::~PhysicsBody()
     // Remove references here
 }
 
-AABBCollider PhysicsBody::GetCollider()
+AABBCollider* PhysicsBody::GetCollider()
 {
-    return m_collider;
+    return &m_collider;
 }

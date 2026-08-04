@@ -10,6 +10,8 @@ class CollisionManager {
         std::list<AABBCollider*> activeColliders;
 
         std::list<PhysicsBody> physicsBodies; 
+
+        std::list<PhysicsBody*> physicsPointers;
         
 
     public:
@@ -28,8 +30,15 @@ class CollisionManager {
 
         bool CheckRectangleCollision(AABBCollider* _colA, AABBCollider* _colB);
 
+        bool BroadStage(PhysicsBody *_col, PhysicsBody *_colB);
+
+        bool NarrowStage(PhysicsBody *_colA, PhysicsBody *_colB);
+
         void SolveCollision(AABBCollider *_colA, AABBCollider *_colB);
         
+        void UpdatePhysicsWorld();
+
+        void UpdatePhysicsBody(PhysicsBody *_physicsBody);
 };
 
 template<typename T>
@@ -37,7 +46,9 @@ inline T * CollisionManager::CreatePhysicsBody(AABB _aabb)
 {
     PhysicsBody newBody = PhysicsBody{_aabb};
 
-    
+    PhysicsBody* bodyReference = &physicsBodies.emplace_back(newBody);
 
-    return &physicsBodies.emplace_back(newBody);
+    physicsPointers.emplace_back(bodyReference);
+
+    return bodyReference;
 }
