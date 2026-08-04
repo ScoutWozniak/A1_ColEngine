@@ -10,11 +10,12 @@ by Jeffery Myers is marked with CC0 1.0. To view a copy of this license, visit h
 #include "raylib.h"
 
 #include "resource_dir.h"	// utility header for SearchAndSetResourceDir
-#include "CollisionManager.h"
+#include "Physics/CollisionManager.h"
 
 #include <iostream>
+#include <string>
 
-int main ()
+int main()
 {
 	// Tell the window to use vsync and work on high DPI displays
 	SetConfigFlags(FLAG_VSYNC_HINT | FLAG_WINDOW_HIGHDPI);
@@ -27,9 +28,13 @@ int main ()
 
 	CollisionManager colManager = CollisionManager{};
 
-	PhysicsBody* bodyTest = colManager.CreatePhysicsBody<PhysicsBody>(AABB{Rectangle{0,0,32,32}, false});	
+	AABB bodyTestAABB = { Rectangle{0, 0, 32, 32}, false };
+	PhysicsBody* bodyTest = colManager.CreatePhysicsBody<PhysicsBody>(bodyTestAABB);
 	bodyTest->m_velocity = {100, 100};
-	PhysicsBody* staticBody = colManager.CreatePhysicsBody<PhysicsBody>(AABB{Rectangle{0,400,800,100}, true});	
+
+
+	AABB staticAABB = { Rectangle{0, 400, 800, 100}, true };
+	PhysicsBody* staticBody = colManager.CreatePhysicsBody<PhysicsBody>(staticAABB);
 	staticBody->m_usesGravity = false;
 	
 	// game loop
