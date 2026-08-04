@@ -21,7 +21,6 @@ void CollisionManager::DrawColliders()
     //TryDrawCollisionRec(activeColliders.front(), activeColliders.back());
     for (PhysicsBody body : physicsBodies) {
         AABBCollider* col = body.GetCollider();
-        DrawRectanglePro(body.GetBroadPhaseCollider().m_size, {0,0}, 0, ColorAlpha(RED, 0.5f));
         col->Draw();
         
     }
@@ -71,6 +70,9 @@ void CollisionManager::UpdatePhysicsWorld()
 }
 
 void CollisionManager::UpdatePhysicsBody(PhysicsBody* _physicsBody) {
+
+    _physicsBody->UpdateForces();
+
     std::list<PhysicsBody*> broadStageCollisions;
     for (PhysicsBody* otherBody : physicsPointers) {
         if (otherBody == _physicsBody) continue;
@@ -108,7 +110,7 @@ void CollisionManager::NarrowStage(std::list<PhysicsBody*> _narrowBodies, Physic
     for (int i = 0; i <= NARROW_STAGE_ITERRATIONS; i++) {
 
 
-        Vector2 velocityStage = (_mainCol->m_velocity * (i / NARROW_STAGE_ITERRATIONS));
+        Vector2 velocityStage = (_mainCol->GetDeltaVelocity() * (i / NARROW_STAGE_ITERRATIONS));
         Vector2 currentStagePosition = Vector2Add( _mainCol->GetPosition(), velocityStage);
         AABB currentStageCollider = {{currentStagePosition.x, currentStagePosition.y,currentSize.x, currentSize.y}, false};
 
@@ -129,7 +131,7 @@ void CollisionManager::NarrowStage(std::list<PhysicsBody*> _narrowBodies, Physic
     }
 
     if (!collisionOnIteration) {
-        _mainCol->SetPositon(Vector2Add(_mainCol->GetPosition(), _mainCol->m_velocity) );
+        _mainCol->SetPositon(Vector2Add(_mainCol->GetPosition(), _mainCol->GetDeltaVelocity() ) );
         return;
     }
 

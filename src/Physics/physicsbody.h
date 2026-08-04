@@ -8,6 +8,7 @@
 
 #include "AABBColider.h"
 #include "raylib.h"
+#include "raymath.h"
 
 class PhysicsBody {
     public:
@@ -28,8 +29,16 @@ class PhysicsBody {
 
         Vector2 m_velocity = {0,0};
 
+        Vector2 GetDeltaVelocity() {
+            return Vector2Multiply(m_velocity, Vector2{GetFrameTime(), GetFrameTime()});
+        }
+
         AABB GetBroadPhaseCollider();
-        
+
+        void UpdateForces();
+
+        bool m_usesGravity = true;
+
     private:
         AABBCollider m_collider;
 };

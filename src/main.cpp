@@ -30,12 +30,19 @@ int main ()
 	PhysicsBody* bodyTest = colManager.CreatePhysicsBody<PhysicsBody>(AABB{Rectangle{0,0,32,32}, false});	
 	bodyTest->m_velocity = {100, 100};
 	PhysicsBody* staticBody = colManager.CreatePhysicsBody<PhysicsBody>(AABB{Rectangle{0,400,800,100}, true});	
-
+	staticBody->m_usesGravity = false;
 	
 	// game loop
 	while (!WindowShouldClose())		// run the loop until the user presses ESCAPE or presses the Close button on the window
 	{
 		colManager.UpdatePhysicsWorld();
+
+		if (IsKeyPressed(KEY_SPACE)) {
+			for (int i = 0; i <= 20; i++) {
+				PhysicsBody* body = colManager.CreatePhysicsBody<PhysicsBody>(AABB{Rectangle{0,0,32,32}, false});
+				body->SetPositon({(float)GetRandomValue(0, 750), (float)GetRandomValue(0, 50)});
+			}
+		}
 
 		// drawing
 		BeginDrawing();
@@ -43,10 +50,11 @@ int main ()
 		// Setup the back buffer for drawing (clear color and depth buffers)
 		ClearBackground(BLACK);
 
-		// draw some text using the default font
-		DrawText("Collision Engine", 0,0,20, WHITE);
-
 		colManager.DrawColliders();
+
+		DrawFPS(0,0);
+
+		DrawText( std::to_string(colManager.GetBodyCount()).c_str(), 0, 30, 20, GREEN);
 		
 		// end the frame and get ready for the next one  (display frame, poll input, etc...)
 		EndDrawing();

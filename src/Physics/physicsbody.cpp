@@ -25,6 +25,13 @@ AABBCollider* PhysicsBody::GetCollider()
 
 AABB PhysicsBody::GetBroadPhaseCollider()
 {
-    Vector2 nextWidth = Vector2Add({m_collider.GetRectangle().width, m_collider.GetRectangle().height }, m_velocity );
+    Vector2 nextWidth = Vector2Add({m_collider.GetRectangle().width, m_collider.GetRectangle().height }, GetDeltaVelocity() );
     return AABB(Rectangle{GetPosition().x, GetPosition().y, nextWidth.x, nextWidth.y}, false);
+}
+
+void PhysicsBody::UpdateForces()
+{
+    if (m_usesGravity) {
+        m_velocity.y += 9.8f;
+    }
 }

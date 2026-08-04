@@ -39,6 +39,8 @@ class CollisionManager {
         void UpdatePhysicsWorld();
 
         void UpdatePhysicsBody(PhysicsBody *_physicsBody);
+
+        int GetBodyCount() {return physicsBodies.size(); }
 };
 
 template<typename T>
