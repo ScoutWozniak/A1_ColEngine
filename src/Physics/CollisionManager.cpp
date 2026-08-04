@@ -64,8 +64,7 @@ void CollisionManager::SolveCollision(PhysicsBody *_colA, PhysicsBody *_colB) {
 void CollisionManager::UpdatePhysicsWorld()
 {
     for (PhysicsBody* body : physicsPointers) {
-        if (body->m_isStatic) continue;
-        UpdatePhysicsBody(body);
+        if (!body->m_isStatic) {UpdatePhysicsBody(body);}
     }
 }
 

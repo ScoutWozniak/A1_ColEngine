@@ -11,6 +11,7 @@ PhysicsBody::PhysicsBody(Rectangle _collider, bool _isStatic)
 PhysicsBody::PhysicsBody(AABB _aabb)
 {
     m_collider = AABBCollider{_aabb};
+    m_isStatic = m_collider.GetIsStatic();
 }
 
 PhysicsBody::~PhysicsBody()
