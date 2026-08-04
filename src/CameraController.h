@@ -1,5 +1,7 @@
 #include "Camera.h"
 
+
+// TODO - Should not hold the SceneCamera, but rather reference the main camera in the scene
 class CameraController {
     public:
         CameraController();
