@@ -5,6 +5,8 @@
 #include "Physics/physicsbody.h"
 
 
+#define NARROW_STAGE_ITERRATIONS 3
+
 class CollisionManager {
     private:
         std::list<AABBCollider*> activeColliders;
@@ -20,10 +22,6 @@ class CollisionManager {
         template<typename T>
         T* CreatePhysicsBody(AABB _aabb);
 
-        void UpdateActiveColliders();
-
-        void UpdateCollider(AABBCollider* _col);
-
         void DrawColliders();
 
         void RegisterCollider(AABBCollider* _collider);
@@ -34,7 +32,9 @@ class CollisionManager {
 
         bool NarrowStage(PhysicsBody *_colA, PhysicsBody *_colB);
 
-        void SolveCollision(AABBCollider *_colA, AABBCollider *_colB);
+        void NarrowStage(std::list<PhysicsBody *> _narrowBodies, PhysicsBody *_mainCol);
+
+        void SolveCollision(PhysicsBody *_colA, PhysicsBody *_colB);
         
         void UpdatePhysicsWorld();
 

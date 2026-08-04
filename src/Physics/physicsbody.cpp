@@ -1,4 +1,5 @@
 #include "physicsbody.h"
+#include "raymath.h"
 
 PhysicsBody::PhysicsBody(Rectangle _collider, bool _isStatic)
 {
@@ -20,4 +21,10 @@ PhysicsBody::~PhysicsBody()
 AABBCollider* PhysicsBody::GetCollider()
 {
     return &m_collider;
+}
+
+AABB PhysicsBody::GetBroadPhaseCollider()
+{
+    Vector2 nextWidth = Vector2Add({m_collider.GetRectangle().width, m_collider.GetRectangle().height }, m_velocity );
+    return AABB(Rectangle{GetPosition().x, GetPosition().y, nextWidth.x, nextWidth.y}, false);
 }

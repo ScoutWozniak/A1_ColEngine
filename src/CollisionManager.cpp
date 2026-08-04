@@ -3,25 +3,6 @@
 #include <math.h>
 #include "raymath.h"
 
-void CollisionManager::UpdateActiveColliders()
-{
-    for (AABBCollider* collider : activeColliders) {
-        if (collider->GetIsStatic()) return;
-        UpdateCollider(collider);
-    }
-}
-
-
-
-void CollisionManager::UpdateCollider(AABBCollider *_col)
-{
-    for (AABBCollider* otherCollider : activeColliders) {
-        if (otherCollider == _col) continue;
-        if (CheckRectangleCollision(_col, otherCollider)) {
-            SolveCollision(_col, otherCollider);
-        }
-    }
-}
 
 void TryDrawCollisionRec(AABBCollider* _colA, AABBCollider* _colB) {
     if (CheckCollisionRecs(_colA->GetRectangle(), _colB->GetRectangle())) {
@@ -40,7 +21,9 @@ void CollisionManager::DrawColliders()
     //TryDrawCollisionRec(activeColliders.front(), activeColliders.back());
     for (PhysicsBody body : physicsBodies) {
         AABBCollider* col = body.GetCollider();
+        DrawRectanglePro(body.GetBroadPhaseCollider().m_size, {0,0}, 0, ColorAlpha(RED, 0.5f));
         col->Draw();
+        
     }
 }
 
@@ -54,22 +37,29 @@ enum SolveDirections {
     AXIS_HEIGHT
 };
 
-void CollisionManager::SolveCollision(AABBCollider *_colA, AABBCollider *_colB) {
-    Rectangle collisionRect = GetCollisionRec(_colA->GetRectangle(), _colB->GetRectangle());
+void CollisionManager::SolveCollision(PhysicsBody *_colA, PhysicsBody *_colB) {
+    AABBCollider* _colliderA = _colA->GetCollider();
+    AABBCollider* _colliderB = _colB->GetCollider();
 
-    bool bothActive = !_colA->GetIsStatic() && !_colB->GetIsStatic();
+    Rectangle collisionRect = GetCollisionRec(_colliderA->GetRectangle(), _colliderB->GetRectangle());
+
+    bool bothActive = !_colliderA->GetIsStatic() && !_colliderB->GetIsStatic();
 
     SolveDirections solveDirection = AXIS_WIDTH;
     if (abs((long)collisionRect.height) < abs((long)collisionRect.width)) { solveDirection = AXIS_HEIGHT; }
 
-    float aPos = solveDirection == AXIS_WIDTH ? _colA->GetRectangle().x : _colA->GetRectangle().y;
+    float aPos = solveDirection == AXIS_WIDTH ? _colliderA->GetRectangle().x : _colliderA->GetRectangle().y;
     float bPos = solveDirection == AXIS_WIDTH ? collisionRect.x : collisionRect.y;
 
     float solveDir = aPos < bPos ? -1.0f : 1.0f;
-    Vector2 newPosition = {_colA->GetRectangle().x, _colA->GetRectangle().y };
+    Vector2 newPosition = {_colliderA->GetRectangle().x, _colliderA->GetRectangle().y };
+
+    Vector2 solutionDirection = {solveDirection == AXIS_WIDTH ? solveDir : 0.0f, solveDirection == AXIS_HEIGHT ? solveDir : 0.0f};
     if (solveDirection == AXIS_WIDTH) newPosition.x += solveDir * collisionRect.width;
     else newPosition.y += solveDir * collisionRect.height;
-    _colA->SetPosition(newPosition);
+    _colA->SetPositon(newPosition);
+    // Stop velocity on the collision axis
+    _colA->m_velocity = (_colA->m_velocity, (_colA->m_velocity, solutionDirection));
 }
 
 void CollisionManager::UpdatePhysicsWorld()
@@ -81,13 +71,17 @@ void CollisionManager::UpdatePhysicsWorld()
 }
 
 void CollisionManager::UpdatePhysicsBody(PhysicsBody* _physicsBody) {
+    std::list<PhysicsBody*> broadStageCollisions;
     for (PhysicsBody* otherBody : physicsPointers) {
         if (otherBody == _physicsBody) continue;
 
         if (BroadStage(_physicsBody, otherBody)) {
-            NarrowStage(_physicsBody, otherBody);
+            // Batch all potentially overlapping colliders so we can calculate things accurately
+            broadStageCollisions.emplace_back(otherBody);
         }
     }
+
+    NarrowStage(broadStageCollisions, _physicsBody);
 }
 
 bool CollisionManager::CheckRectangleCollision(AABBCollider *_colA, AABBCollider *_colB)
@@ -97,13 +91,51 @@ bool CollisionManager::CheckRectangleCollision(AABBCollider *_colA, AABBCollider
 
 // Check overlap of bodies accounting for velocity
 bool CollisionManager::BroadStage(PhysicsBody* _col, PhysicsBody* _colB) {
-    return CheckRectangleCollision(_col->GetCollider(), _colB->GetCollider());
+    return CheckCollisionRecs(_col->GetBroadPhaseCollider().m_size, _colB->GetCollider()->GetRectangle());
 }
 
-// Check overlap of bodies and then solve collision
-bool CollisionManager::NarrowStage(PhysicsBody* _colA, PhysicsBody* _colB) {
-    SolveCollision(_colA->GetCollider(), _colB->GetCollider());
-    return true;
+
+// NOTE: This stage features a lot of iteration and is far too slow
+// TODO: Further optimisations
+void CollisionManager::NarrowStage(std::list<PhysicsBody*> _narrowBodies, PhysicsBody* _mainCol) {
+    Vector2 currentSize = {_mainCol->GetCollider()->GetRectangle().width, _mainCol->GetCollider()->GetRectangle().height};
+
+    bool collisionOnIteration = false;
+
+    std::list<PhysicsBody*> _narrowColliders;
+
+    int collidingIteration = -1;
+    for (int i = 0; i <= NARROW_STAGE_ITERRATIONS; i++) {
+
+
+        Vector2 velocityStage = (_mainCol->m_velocity * (i / NARROW_STAGE_ITERRATIONS));
+        Vector2 currentStagePosition = Vector2Add( _mainCol->GetPosition(), velocityStage);
+        AABB currentStageCollider = {{currentStagePosition.x, currentStagePosition.y,currentSize.x, currentSize.y}, false};
+
+        for (PhysicsBody* _collider : _narrowBodies) {
+            bool narrowCol = CheckCollisionRecs(currentStageCollider.m_size, _collider->GetCollider()->GetRectangle());
+
+            if (narrowCol) {
+                collisionOnIteration = true;
+                collidingIteration = i;
+
+                _narrowColliders.emplace_back(_collider);
+            }
+        }
+
+        if (collisionOnIteration) {
+            _mainCol->SetPositon(currentStagePosition);
+        }
+    }
+
+    if (!collisionOnIteration) {
+        _mainCol->SetPositon(Vector2Add(_mainCol->GetPosition(), _mainCol->m_velocity) );
+        return;
+    }
+
+    for (PhysicsBody* finalCollisions : _narrowColliders) {
+        SolveCollision(_mainCol, finalCollisions);
+    }
 }
 
 

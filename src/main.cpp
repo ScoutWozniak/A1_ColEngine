@@ -28,6 +28,9 @@ int main ()
 	CollisionManager colManager = CollisionManager{};
 
 	PhysicsBody* bodyTest = colManager.CreatePhysicsBody<PhysicsBody>(AABB{Rectangle{0,0,32,32}, false});	
+	bodyTest->m_velocity = {100, 100};
+	PhysicsBody* staticBody = colManager.CreatePhysicsBody<PhysicsBody>(AABB{Rectangle{0,400,800,100}, true});	
+
 	
 	// game loop
 	while (!WindowShouldClose())		// run the loop until the user presses ESCAPE or presses the Close button on the window

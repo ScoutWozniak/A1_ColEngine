@@ -29,6 +29,7 @@ class PhysicsBody {
         Vector2 m_velocity = {0,0};
 
         AABB GetBroadPhaseCollider();
+        
     private:
         AABBCollider m_collider;
 };
