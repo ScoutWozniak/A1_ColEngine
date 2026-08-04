@@ -11,9 +11,12 @@ by Jeffery Myers is marked with CC0 1.0. To view a copy of this license, visit h
 
 #include "resource_dir.h"	// utility header for SearchAndSetResourceDir
 #include "Physics/CollisionManager.h"
+#include "CameraController.h"
 
 #include <iostream>
 #include <string>
+
+
 
 int main()
 {
@@ -28,6 +31,7 @@ int main()
 
 	CollisionManager colManager = CollisionManager{};
 
+	// TODO - Seperate this stuff into a seperate scene class
 	AABB bodyTestAABB = { Rectangle{0, 0, 32, 32}, false };
 	PhysicsBody* bodyTest = colManager.CreatePhysicsBody<PhysicsBody>(bodyTestAABB);
 	bodyTest->m_velocity = {100, 100};
@@ -37,6 +41,8 @@ int main()
 	PhysicsBody* staticBody = colManager.CreatePhysicsBody<PhysicsBody>(staticAABB);
 	staticBody->m_usesGravity = false;
 	
+	CameraController camController = CameraController();
+
 	// game loop
 	while (!WindowShouldClose())		// run the loop until the user presses ESCAPE or presses the Close button on the window
 	{
@@ -49,13 +55,19 @@ int main()
 			}
 		}
 
+		camController.Update();
+
 		// drawing
 		BeginDrawing();
 
 		// Setup the back buffer for drawing (clear color and depth buffers)
 		ClearBackground(BLACK);
 
-		colManager.DrawColliders();
+		BeginMode2D(camController.m_camera.m_camera2D);
+
+			colManager.DrawColliders();
+
+		EndMode2D();
 
 		DrawFPS(0,0);
 
