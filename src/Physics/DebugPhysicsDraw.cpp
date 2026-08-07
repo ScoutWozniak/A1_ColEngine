@@ -12,7 +12,17 @@ void DebugDraw::DrawPhysicsBody(PhysicsBody* _body) {
 
 void DebugDraw::DrawHighlight(PhysicsBody* _body) {
     Rectangle rect = _body->GetCollider()->GetRectangle();
-    DrawRectanglePro(rect, Vector2Zero(), 0.0f, ColorLerp(BLUE, WHITE, sin(GetTime())));
+    Color _lineCol = ColorLerp(BLUE, WHITE, sin(GetTime()));
+
+    Vector2 _rectLines[4] = {{rect.x, rect.y}, {rect.x + rect.width, rect.y}, {rect.x + rect.width, rect.y + rect.height}, {rect.x, rect.y + rect.height}};
+    for (int i = 0; i <= 4; i++) {
+        // TODO - Tidy up
+        int secondPosIndex = i + 1;
+        if (secondPosIndex > 3) {
+            secondPosIndex = 0;
+        }
+        DrawLineDashed(_rectLines[i], _rectLines[secondPosIndex], 16, 16, _lineCol);
+    }
 }
 
 void DebugDraw::DrawDebugMenu(PhysicsBody *_body)
