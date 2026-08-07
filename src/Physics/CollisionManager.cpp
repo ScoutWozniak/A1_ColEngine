@@ -2,7 +2,7 @@
 #include <bits/stdc++.h>
 #include <math.h>
 #include "raymath.h"
-#include "DebugPhysicsDraw.h"
+
 
 
 void TryDrawCollisionRec(AABBCollider* _colA, AABBCollider* _colB) {
@@ -20,7 +20,7 @@ void TryDrawCollisionRec(AABBCollider* _colA, AABBCollider* _colB) {
 void CollisionManager::DrawColliders()
 {
     for (PhysicsBody body : m_physicsBodies) {
-        DrawPhysicsBody(&body);
+        DebugDraw::DrawPhysicsBody(&body);
     }
 }
 
@@ -86,8 +86,18 @@ void CollisionManager::UpdatePhysicsWorld()
     }
 }
 
-void CollisionManager::UpdatePhysicsBody(PhysicsBody* _physicsBody) {
+PhysicsBody *CollisionManager::GetBodyAtPoint(Vector2 _point)
+{
+    // HACK!!
+    for (PhysicsBody* body : m_physicsPointers) {
+        if (body->CheckPointInCollider(_point))
+            return body;
+    }
+    return nullptr;
+}
 
+void CollisionManager::UpdatePhysicsBody(PhysicsBody *_physicsBody)
+{
 
     _physicsBody->UpdateSleep();
     _physicsBody->UpdateForces();
@@ -104,8 +114,6 @@ void CollisionManager::UpdatePhysicsBody(PhysicsBody* _physicsBody) {
 
     NarrowStage(broadStageCollisions, _physicsBody);
 }
-
-
 
 bool CollisionManager::CheckRectangleCollision(AABBCollider *_colA, AABBCollider *_colB)
 {

@@ -8,13 +8,16 @@ by Jeffery Myers is marked with CC0 1.0. To view a copy of this license, visit h
 */
 
 #include "raylib.h"
-
 #include "resource_dir.h"	// utility header for SearchAndSetResourceDir
-#include "Physics/CollisionManager.h"
-#include "CameraController.h"
 
 #include <iostream>
 #include <string>
+
+#include "Physics/CollisionManager.h"
+#include "CameraController.h"
+
+
+
 
 
 
@@ -43,12 +46,14 @@ int main()
 	
 	CameraController camController = CameraController();
 
+	PhysicsBody* _highlightedBody = nullptr;
+
 	// game loop
 	while (!WindowShouldClose())		// run the loop until the user presses ESCAPE or presses the Close button on the window
 	{
 		colManager.UpdatePhysicsWorld();
 
-		if (IsKeyPressed(KEY_SPACE)) {
+		if (IsKeyPressed(KEY_Q)) {
 			for (int i = 0; i <= 20; i++) {
 				PhysicsBody* body = colManager.CreatePhysicsBody<PhysicsBody>(AABB{Rectangle{0,0,32,32}, false});
 				body->SetPositon({(float)GetRandomValue(0, 750), (float)GetRandomValue(0, 50)});
@@ -58,7 +63,15 @@ int main()
 			}
 		}
 
-		if (IsKeyPressed(KEY_Q)) colManager.m_pausePhysics = !colManager.m_pausePhysics;
+		if (IsKeyPressed(KEY_SPACE)) colManager.m_pausePhysics = !colManager.m_pausePhysics;
+		
+		PhysicsBody* _hoveredBody = colManager.GetBodyAtPoint(camController.m_camera.ScreenToWorldPosition(GetMousePosition()));
+
+		if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
+			_highlightedBody = _hoveredBody;
+			
+		}
+		
 
 		camController.Update();
 
@@ -72,11 +85,23 @@ int main()
 
 			colManager.DrawColliders();
 
+			if (_highlightedBody) {
+				DebugDraw::DrawHighlight(_highlightedBody);
+			}
+
+			if (_hoveredBody) {
+				DebugDraw::DrawHighlight(_hoveredBody);
+			}
+
 		EndMode2D();
 
 		DrawFPS(0,0);
 
 		DrawText( std::to_string(colManager.GetBodyCount()).c_str(), 0, 30, 20, GREEN);
+
+		if (_highlightedBody) {
+			DebugDraw::DrawDebugMenu(_highlightedBody);
+		}
 		
 		// end the frame and get ready for the next one  (display frame, poll input, etc...)
 		EndDrawing();

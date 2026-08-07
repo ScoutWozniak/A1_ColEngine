@@ -5,17 +5,12 @@
 
 // We should only need to reference the base physics class, all logic should replace virtual methods if need be
 #include "Physics/physicsbody.h"
+#include "Physics/DebugPhysicsDraw.h"
 
 
 #define NARROW_STAGE_ITERRATIONS 3
 
 class CollisionManager {
-    private:
-        std::list<PhysicsBody> m_physicsBodies; 
-
-        std::list<PhysicsBody*> m_physicsPointers;
-        
-
     public:
 
         bool m_pausePhysics = false;
@@ -24,20 +19,10 @@ class CollisionManager {
         T* CreatePhysicsBody(AABB _aabb);
 
         void DrawColliders();
-
-        bool CheckRectangleCollision(AABBCollider* _colA, AABBCollider* _colB);
-
-        bool BroadStage(PhysicsBody *_col, PhysicsBody *_colB);
-
-        bool NarrowStage(PhysicsBody *_colA, PhysicsBody *_colB);
-
-        void NarrowStage(std::list<PhysicsBody *> _narrowBodies, PhysicsBody *_mainCol);
-
-        void SolveCollision(PhysicsBody *_colA, PhysicsBody *_colB);
         
         void UpdatePhysicsWorld();
 
-        void UpdatePhysicsBody(PhysicsBody *_physicsBody);
+        
 
         int GetBodyCount() {return m_physicsBodies.size(); }
 
@@ -50,6 +35,23 @@ class CollisionManager {
                 delete _body;
             }
         }
+
+        PhysicsBody* GetBodyAtPoint(Vector2 _point);
+
+    private:
+        std::list<PhysicsBody> m_physicsBodies; 
+
+        std::list<PhysicsBody*> m_physicsPointers;
+        
+        void UpdatePhysicsBody(PhysicsBody *_physicsBody);
+
+        bool CheckRectangleCollision(AABBCollider* _colA, AABBCollider* _colB);
+
+        bool BroadStage(PhysicsBody *_col, PhysicsBody *_colB);
+
+        void NarrowStage(std::list<PhysicsBody *> _narrowBodies, PhysicsBody *_mainCol);
+
+        void SolveCollision(PhysicsBody *_colA, PhysicsBody *_colB);
 
         
 };

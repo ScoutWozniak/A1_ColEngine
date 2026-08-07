@@ -11,6 +11,8 @@ class SceneCamera {
 
         Vector2 GetPosition();
 
+        Vector2 ScreenToWorldPosition(Vector2 _screenPos);
+
         SceneCamera();
     private:
 

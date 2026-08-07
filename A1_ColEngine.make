@@ -122,6 +122,7 @@ GENERATED += $(OBJDIR)/AABBColider.o
 GENERATED += $(OBJDIR)/Camera.o
 GENERATED += $(OBJDIR)/CameraController.o
 GENERATED += $(OBJDIR)/CollisionManager.o
+GENERATED += $(OBJDIR)/DebugPhysicsDraw.o
 GENERATED += $(OBJDIR)/main.o
 GENERATED += $(OBJDIR)/physicsbody.o
 GENERATED += $(OBJDIR)/staticbody.o
@@ -129,6 +130,7 @@ OBJECTS += $(OBJDIR)/AABBColider.o
 OBJECTS += $(OBJDIR)/Camera.o
 OBJECTS += $(OBJDIR)/CameraController.o
 OBJECTS += $(OBJDIR)/CollisionManager.o
+OBJECTS += $(OBJDIR)/DebugPhysicsDraw.o
 OBJECTS += $(OBJDIR)/main.o
 OBJECTS += $(OBJDIR)/physicsbody.o
 OBJECTS += $(OBJDIR)/staticbody.o
@@ -205,6 +207,9 @@ $(OBJDIR)/AABBColider.o: src/Physics/AABBColider.cpp
 	@echo "$(notdir $<)"
 	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
 $(OBJDIR)/CollisionManager.o: src/Physics/CollisionManager.cpp
+	@echo "$(notdir $<)"
+	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
+$(OBJDIR)/DebugPhysicsDraw.o: src/Physics/DebugPhysicsDraw.cpp
 	@echo "$(notdir $<)"
 	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
 $(OBJDIR)/physicsbody.o: src/Physics/physicsbody.cpp

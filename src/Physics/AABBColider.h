@@ -41,6 +41,8 @@ class AABBCollider {
 
 
         void SetPosition(Vector2 _position);
+
+        bool CheckPointInCollider(Vector2 _point);
     
 };  
 

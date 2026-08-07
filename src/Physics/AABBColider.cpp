@@ -35,3 +35,9 @@ void AABBCollider::SetPosition(Vector2 _position)
     m_collider.m_size.x = _position.x;
     m_collider.m_size.y = _position.y;
 }
+
+bool AABBCollider::CheckPointInCollider(Vector2 _point)
+{
+    return _point.x > m_collider.m_size.x && _point.x < m_collider.m_size.x + m_collider.m_size.width &&
+            _point.y > m_collider.m_size.y && _point.y < m_collider.m_size.y + m_collider.m_size.height;
+}

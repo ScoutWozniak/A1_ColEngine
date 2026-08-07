@@ -1,14 +1,22 @@
 #pragma once
 
 #include <string>
-#include "CollisionManager.h"
+#include "Physics/CollisionManager.h"
 
-void DrawPhysicsBody(PhysicsBody* _body) {
-    _body->GetCollider()->Draw();
+#ifndef DEBUGPHYSDRAW_H
+#define DEBUGPHYSDRAW_H
 
-    std::string _velText = std::to_string(_body->m_velocity.x) + ", " + std::to_string(_body->m_velocity.y);
-    std::string _velLength = std::to_string(Vector2Length(_body->m_velocity));
-    DrawText(_velText.c_str(), _body->GetPosition().x, _body->GetPosition().y + 10, 10, _body->m_isAsleep ? RED : WHITE);
-    DrawText(_velLength.c_str(), _body->GetPosition().x, _body->GetPosition().y + 30, 10, _body->m_isAsleep ? RED : WHITE);
+namespace DebugDraw {
+    void DrawPhysicsBody(PhysicsBody* _body);
 
+    void DrawHighlight(PhysicsBody* _body);
+
+    void DrawDebugMenu(PhysicsBody* _body);
+
+    const float DEBUG_MENU_WIDTH = 300;
+    const float DEBUG_MENU_HEIGHT = 200;
 }
+
+
+
+#endif

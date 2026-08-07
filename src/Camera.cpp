@@ -1,4 +1,5 @@
 #include "Camera.h"
+#include "raymath.h"
 
 SceneCamera::SceneCamera() {
     m_camera2D = Camera2D();
@@ -15,6 +16,11 @@ void SceneCamera::UpdateCamera()
 
 Vector2 SceneCamera::GetPosition() {
     return m_camera2D.target;
+}
+
+Vector2 SceneCamera::ScreenToWorldPosition(Vector2 _screenPos)
+{
+    return GetScreenToWorld2D(_screenPos, m_camera2D);
 }
 
 void SceneCamera::SetPosition(Vector2 _pos) {

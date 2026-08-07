@@ -56,6 +56,8 @@ class PhysicsBody {
         void TryAwake() {m_awakeStage = AWAKE;}
 
         bool GetIsAsleep() {return m_awakeStage == ASLEEP; }
+
+        bool CheckPointInCollider(Vector2 _point) {return m_collider.CheckPointInCollider(_point);}
     private:
         AABBCollider m_collider;
 
