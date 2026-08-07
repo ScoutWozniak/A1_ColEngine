@@ -1,4 +1,5 @@
 #include "AABBColider.h"
+#include <string>
 
 AABBCollider::AABBCollider()
 {

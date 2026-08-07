@@ -1,3 +1,5 @@
+#pragma once
+
 #include <list>
 #include "AABBColider.h"
 
@@ -9,22 +11,19 @@
 
 class CollisionManager {
     private:
-        std::list<AABBCollider*> activeColliders;
+        std::list<PhysicsBody> m_physicsBodies; 
 
-        std::list<PhysicsBody> physicsBodies; 
-
-        std::list<PhysicsBody*> physicsPointers;
+        std::list<PhysicsBody*> m_physicsPointers;
         
 
     public:
-        // Physics body related code
+
+        bool m_pausePhysics = false;
 
         template<typename T>
         T* CreatePhysicsBody(AABB _aabb);
 
         void DrawColliders();
-
-        void RegisterCollider(AABBCollider* _collider);
 
         bool CheckRectangleCollision(AABBCollider* _colA, AABBCollider* _colB);
 
@@ -40,7 +39,19 @@ class CollisionManager {
 
         void UpdatePhysicsBody(PhysicsBody *_physicsBody);
 
-        int GetBodyCount() {return physicsBodies.size(); }
+        int GetBodyCount() {return m_physicsBodies.size(); }
+
+        Vector2 CalculateCollisionVelocity(Vector2 _bodyVelocity, Vector2 _collisionNormal);
+
+        Vector2 CancelCollisionNormal(Vector2 _bodyVelocity, Vector2 _collisionNormal);
+
+        ~CollisionManager() {
+            for (PhysicsBody* _body : m_physicsPointers) {
+                delete _body;
+            }
+        }
+
+        
 };
 
 template<typename T>
@@ -48,9 +59,9 @@ inline T * CollisionManager::CreatePhysicsBody(AABB _aabb)
 {
     PhysicsBody newBody = PhysicsBody{_aabb};
 
-    PhysicsBody* bodyReference = &physicsBodies.emplace_back(newBody);
+    PhysicsBody* bodyReference = &m_physicsBodies.emplace_back(newBody);
 
-    physicsPointers.emplace_back(bodyReference);
+    m_physicsPointers.emplace_back(bodyReference);
 
     return bodyReference;
 }

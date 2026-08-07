@@ -9,6 +9,14 @@
 #include "AABBColider.h"
 #include "raylib.h"
 #include "raymath.h"
+#include "PhysicsProperties.h"
+
+enum AwakeStages {
+    AWAKE = 0,
+    AWAITING_SLEEP = 1,
+    ASLEEP = 2
+};
+
 
 class PhysicsBody {
     public:
@@ -39,6 +47,21 @@ class PhysicsBody {
 
         bool m_usesGravity = true;
 
+        PhysicsProperties m_physicsProperties = {1.0f, 0.1f};
+
+        bool m_isAsleep = false;
+
+        void UpdateSleep();
+
+        void TryAwake() {m_awakeStage = AWAKE;}
+
+        bool GetIsAsleep() {return m_awakeStage == ASLEEP; }
     private:
         AABBCollider m_collider;
+
+        AwakeStages m_awakeStage =  AWAKE;
+        float m_noVelStart = 0.0f;
+
+        const float ASLEEP_THRESHOLD = 1.0f;
+        const float ASLEEP_DELAY = 0.5f;
 };

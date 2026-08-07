@@ -2,6 +2,7 @@
 #include <bits/stdc++.h>
 #include <math.h>
 #include "raymath.h"
+#include "DebugPhysicsDraw.h"
 
 
 void TryDrawCollisionRec(AABBCollider* _colA, AABBCollider* _colB) {
@@ -18,17 +19,9 @@ void TryDrawCollisionRec(AABBCollider* _colA, AABBCollider* _colB) {
 
 void CollisionManager::DrawColliders()
 {
-    //TryDrawCollisionRec(activeColliders.front(), activeColliders.back());
-    for (PhysicsBody body : physicsBodies) {
-        AABBCollider* col = body.GetCollider();
-        col->Draw();
-        
+    for (PhysicsBody body : m_physicsBodies) {
+        DrawPhysicsBody(&body);
     }
-}
-
-void CollisionManager::RegisterCollider(AABBCollider *_collider)
-{
-    activeColliders.emplace_back(_collider);
 }
 
 enum SolveDirections {
@@ -36,6 +29,8 @@ enum SolveDirections {
     AXIS_HEIGHT
 };
 
+
+// TODO - Tidy up
 void CollisionManager::SolveCollision(PhysicsBody *_colA, PhysicsBody *_colB) {
     AABBCollider* _colliderA = _colA->GetCollider();
     AABBCollider* _colliderB = _colB->GetCollider();
@@ -51,29 +46,54 @@ void CollisionManager::SolveCollision(PhysicsBody *_colA, PhysicsBody *_colB) {
     float bPos = solveDirection == AXIS_WIDTH ? collisionRect.x : collisionRect.y;
 
     float solveDir = aPos < bPos ? -1.0f : 1.0f;
-    Vector2 newPosition = {_colliderA->GetRectangle().x, _colliderA->GetRectangle().y };
+    
 
-    Vector2 solutionDirection = {solveDirection == AXIS_WIDTH ? solveDir : 0.0f, solveDirection == AXIS_HEIGHT ? solveDir : 0.0f};
-    if (solveDirection == AXIS_WIDTH) newPosition.x += solveDir * collisionRect.width;
-    else newPosition.y += solveDir * collisionRect.height;
+    Vector2 solutionNormal = {solveDirection == AXIS_WIDTH ? solveDir : 0.0f, solveDirection == AXIS_HEIGHT ? solveDir : 0.0f};
+    float solveMagnitude = solveDirection == AXIS_WIDTH ? collisionRect.width : collisionRect.height;
+
+
+    Vector2 newPosition = {_colliderA->GetRectangle().x, _colliderA->GetRectangle().y };
+    newPosition = Vector2Add(newPosition, solutionNormal * solveMagnitude);
+
+    Vector2 _impactVelA = CalculateCollisionVelocity(_colA->m_velocity, solutionNormal) * _colA->m_physicsProperties.m_bouncy;
+
+    // Resolve collision
     _colA->SetPositon(newPosition);
     // Stop velocity on the collision axis
-    _colA->m_velocity = (_colA->m_velocity, (_colA->m_velocity, solutionDirection));
+    
+    Vector2 _resolutionVelA = CancelCollisionNormal( _colA->m_velocity, solutionNormal);
+    
+    // HACK - If body is static then we can't push it, velocity needs to be completely nulled out or reversed
+    float continueOn = _colB->m_isStatic ? 1.0f : -1.0f;
+
+    _resolutionVelA = Vector2Add(_resolutionVelA, _impactVelA * -1.0f);
+
+
+    _colA->m_velocity = _resolutionVelA;
+
+    _colB->m_velocity = _resolutionVelA * -1.0f;    
+
+    _colA->TryAwake();
+    _colB->TryAwake();
 }
 
 void CollisionManager::UpdatePhysicsWorld()
 {
-    for (PhysicsBody* body : physicsPointers) {
-        if (!body->m_isStatic) {UpdatePhysicsBody(body);}
+    if (m_pausePhysics) return;
+
+    for (PhysicsBody* body : m_physicsPointers) {
+        if (!body->m_isStatic && !body->GetIsAsleep()) {UpdatePhysicsBody(body);}
     }
 }
 
 void CollisionManager::UpdatePhysicsBody(PhysicsBody* _physicsBody) {
 
+
+    _physicsBody->UpdateSleep();
     _physicsBody->UpdateForces();
 
     std::list<PhysicsBody*> broadStageCollisions;
-    for (PhysicsBody* otherBody : physicsPointers) {
+    for (PhysicsBody* otherBody : m_physicsPointers) {
         if (otherBody == _physicsBody) continue;
 
         if (BroadStage(_physicsBody, otherBody)) {
@@ -84,6 +104,8 @@ void CollisionManager::UpdatePhysicsBody(PhysicsBody* _physicsBody) {
 
     NarrowStage(broadStageCollisions, _physicsBody);
 }
+
+
 
 bool CollisionManager::CheckRectangleCollision(AABBCollider *_colA, AABBCollider *_colB)
 {
@@ -140,3 +162,22 @@ void CollisionManager::NarrowStage(std::list<PhysicsBody*> _narrowBodies, Physic
 }
 
 
+Vector2 CollisionManager::CalculateCollisionVelocity(Vector2 _bodyVelocity, Vector2 _collisionNormal)
+{
+    Vector2 _velocityNormal = Vector2Normalize(_bodyVelocity);
+    float dotProduct = Vector2DotProduct(_velocityNormal, _collisionNormal);
+
+    float impactMagnitude = Vector2Length(_bodyVelocity) * dotProduct;
+
+    return _collisionNormal * impactMagnitude; 
+}
+
+// TODO - Find a neater way to do this!
+Vector2 CollisionManager::CancelCollisionNormal(Vector2 _bodyVelocity, Vector2 _collisionNormal)
+{
+    Vector2 _newVel = _bodyVelocity;
+    if (_collisionNormal.x != 0.0f) {_newVel.x = 0;}
+    if (_collisionNormal.y != 0.0f) {_newVel.y = 0;}
+
+    return _newVel;
+}

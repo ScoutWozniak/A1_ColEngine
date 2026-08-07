@@ -52,8 +52,13 @@ int main()
 			for (int i = 0; i <= 20; i++) {
 				PhysicsBody* body = colManager.CreatePhysicsBody<PhysicsBody>(AABB{Rectangle{0,0,32,32}, false});
 				body->SetPositon({(float)GetRandomValue(0, 750), (float)GetRandomValue(0, 50)});
+
+				body->m_physicsProperties.m_bouncy = (float)GetRandomValue(1, 99) / 100.0f;
+				body->m_physicsProperties.m_mass = (float)GetRandomValue(1, 199) / 100.0f;
 			}
 		}
+
+		if (IsKeyPressed(KEY_Q)) colManager.m_pausePhysics = !colManager.m_pausePhysics;
 
 		camController.Update();
 

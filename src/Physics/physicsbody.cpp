@@ -36,3 +36,30 @@ void PhysicsBody::UpdateForces()
         m_velocity.y += 9.8f;
     }
 }
+
+void PhysicsBody::UpdateSleep()
+{
+    bool metThreshold = abs( Vector2Length(m_velocity) <= ASLEEP_THRESHOLD);
+
+    if (!metThreshold) {
+        m_awakeStage = AWAKE;
+        return;
+    }
+
+    switch(m_awakeStage) {
+        case AWAKE:
+            m_noVelStart = GetTime();
+            m_awakeStage = AWAITING_SLEEP;
+            return;
+        case AWAITING_SLEEP:
+            if (m_noVelStart + ASLEEP_DELAY <= GetTime()) {
+                m_awakeStage = ASLEEP;
+            }
+            return;
+        case ASLEEP:
+            return;
+
+    }
+
+
+}
