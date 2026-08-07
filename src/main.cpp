@@ -16,7 +16,8 @@ by Jeffery Myers is marked with CC0 1.0. To view a copy of this license, visit h
 #include "Physics/CollisionManager.h"
 #include "CameraController.h"
 
-
+#include "Scenes/SceneManager.h"
+#include "Scenes/SceneIndex.h"
 
 
 
@@ -48,6 +49,12 @@ int main()
 
 	PhysicsBody* _highlightedBody = nullptr;
 
+	SceneManager sceneManager = {};
+	CurrentScene::SceneManager_Instance = &sceneManager;
+
+	sceneManager.LoadScene<PhysicsTestScene>();
+	
+
 	// game loop
 	while (!WindowShouldClose())		// run the loop until the user presses ESCAPE or presses the Close button on the window
 	{
@@ -67,7 +74,7 @@ int main()
 		
 		PhysicsBody* _hoveredBody = colManager.GetBodyAtPoint(camController.m_camera.ScreenToWorldPosition(GetMousePosition()));
 
-		if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
+		if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT) && _hoveredBody != nullptr) {
 			_highlightedBody = _hoveredBody;
 			
 		}
@@ -75,11 +82,16 @@ int main()
 
 		camController.Update();
 
+		sceneManager.Update();
+
+
 		// drawing
 		BeginDrawing();
 
 		// Setup the back buffer for drawing (clear color and depth buffers)
 		ClearBackground(BLACK);
+
+		
 
 		BeginMode2D(camController.m_camera.m_camera2D);
 
@@ -107,7 +119,7 @@ int main()
 			DebugDraw::DrawDebugMenu(_highlightedBody);
 		}
 
-		
+		sceneManager.Draw();
 		
 		// end the frame and get ready for the next one  (display frame, poll input, etc...)
 		EndDrawing();
