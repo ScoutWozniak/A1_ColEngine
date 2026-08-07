@@ -102,6 +102,10 @@ int main()
 		if (_highlightedBody) {
 			DebugDraw::DrawDebugMenu(_highlightedBody);
 		}
+
+		if (colManager.m_pausePhysics) {
+			DrawText("SIMULATION PAUSED", (GetScreenWidth() * 0.5f) - 200, 0, 40, RED);
+		}
 		
 		// end the frame and get ready for the next one  (display frame, poll input, etc...)
 		EndDrawing();
