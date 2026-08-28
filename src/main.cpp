@@ -16,10 +16,6 @@ by Jeffery Myers is marked with CC0 1.0. To view a copy of this license, visit h
 #include "Physics/CollisionManager.h"
 #include "CameraController.h"
 
-#include "Scenes/SceneManager.h"
-#include "Scenes/SceneIndex.h"
-
-
 
 
 int main()
@@ -49,41 +45,30 @@ int main()
 
 	PhysicsBody* _highlightedBody = nullptr;
 
-	SceneManager sceneManager = {};
-	CurrentScene::SceneManager_Instance = &sceneManager;
-
-	sceneManager.LoadScene<PhysicsTestScene>();
-	
-
 	// game loop
 	while (!WindowShouldClose())		// run the loop until the user presses ESCAPE or presses the Close button on the window
 	{
 		colManager.UpdatePhysicsWorld();
 
-		if (IsKeyPressed(KEY_Q)) {
-			for (int i = 0; i <= 20; i++) {
-				PhysicsBody* body = colManager.CreatePhysicsBody<PhysicsBody>(AABB{Rectangle{0,0,32,32}, false});
-				body->SetPositon({(float)GetRandomValue(0, 750), (float)GetRandomValue(0, 50)});
-
-				body->m_physicsProperties.m_bouncy = (float)GetRandomValue(1, 99) / 100.0f;
-				body->m_physicsProperties.m_mass = (float)GetRandomValue(1, 199) / 100.0f;
-			}
-		}
-
 		if (IsKeyPressed(KEY_SPACE)) colManager.m_pausePhysics = !colManager.m_pausePhysics;
 		
-		PhysicsBody* _hoveredBody = colManager.GetBodyAtPoint(camController.m_camera.ScreenToWorldPosition(GetMousePosition()));
+		Vector2 pointerPos = camController.m_camera.ScreenToWorldPosition(GetMousePosition());
+
+		PhysicsBody* _hoveredBody = colManager.GetBodyAtPoint(pointerPos);
 
 		if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT) && _hoveredBody != nullptr) {
 			_highlightedBody = _hoveredBody;
 			
 		}
+
+		if (IsMouseButtonPressed(MOUSE_BUTTON_RIGHT)) {
+			AABB spawnedCol = { Rectangle{0, 0, GetRandomValue(1,64), GetRandomValue(1,64)}, false };
+			PhysicsBody* spawnedBody = colManager.CreatePhysicsBody<PhysicsBody>(spawnedCol);
+			spawnedBody->GetCollider()->SetPosition(pointerPos);
+		}
 		
 
 		camController.Update();
-
-		sceneManager.Update();
-
 
 		// drawing
 		BeginDrawing();
@@ -91,19 +76,9 @@ int main()
 		// Setup the back buffer for drawing (clear color and depth buffers)
 		ClearBackground(BLACK);
 
-		
-
 		BeginMode2D(camController.m_camera.m_camera2D);
 
 			colManager.DrawColliders();
-
-			if (_highlightedBody) {
-				DebugDraw::DrawHighlight(_highlightedBody);
-			}
-
-			if (_hoveredBody) {
-				DebugDraw::DrawHighlight(_hoveredBody);
-			}
 
 		EndMode2D();
 
@@ -118,8 +93,6 @@ int main()
 		if (_highlightedBody) {
 			DebugDraw::DrawDebugMenu(_highlightedBody);
 		}
-
-		sceneManager.Draw();
 		
 		// end the frame and get ready for the next one  (display frame, poll input, etc...)
 		EndDrawing();

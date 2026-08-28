@@ -1,6 +1,7 @@
 #pragma once
 
 #include <list>
+#include <tuple>
 #include "AABBColider.h"
 
 // We should only need to reference the base physics class, all logic should replace virtual methods if need be
@@ -37,6 +38,7 @@ class CollisionManager {
         }
 
         PhysicsBody* GetBodyAtPoint(Vector2 _point);
+    
 
     private:
         std::list<PhysicsBody> m_physicsBodies; 
