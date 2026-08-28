@@ -55,14 +55,15 @@ int main()
 		Vector2 pointerPos = camController.m_camera.ScreenToWorldPosition(GetMousePosition());
 
 		PhysicsBody* _hoveredBody = colManager.GetBodyAtPoint(pointerPos);
-
+		// Select a body on mouse button pressed
 		if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT) && _hoveredBody != nullptr) {
 			_highlightedBody = _hoveredBody;
 			
 		}
 
+		// Spawn a body on mouse button pressed
 		if (IsMouseButtonPressed(MOUSE_BUTTON_RIGHT)) {
-			AABB spawnedCol = { Rectangle{0, 0, GetRandomValue(1,64), GetRandomValue(1,64)}, false };
+			AABB spawnedCol = { Rectangle{0, 0, GetRandomValue(8,64), GetRandomValue(8,64)}, false };
 			PhysicsBody* spawnedBody = colManager.CreatePhysicsBody<PhysicsBody>(spawnedCol);
 			spawnedBody->GetCollider()->SetPosition(pointerPos);
 		}
@@ -77,19 +78,20 @@ int main()
 		ClearBackground(BLACK);
 
 		BeginMode2D(camController.m_camera.m_camera2D);
-
 			colManager.DrawColliders();
-
 		EndMode2D();
 
 		DrawFPS(0,0);
 
+		// Drawing the number of bodies active
 		DrawText( std::to_string(colManager.GetBodyCount()).c_str(), 0, 30, 20, GREEN);
 
+		// Show if simulation is paused
 		if (colManager.m_pausePhysics) {
 			DrawText("SIMULATION PAUSED", (GetScreenWidth() * 0.5f) - 200, 0, 40, RED);
 		}
-
+		
+		// Debug menu for highlighted body
 		if (_highlightedBody) {
 			DebugDraw::DrawDebugMenu(_highlightedBody);
 		}
